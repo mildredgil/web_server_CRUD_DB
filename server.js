@@ -4,8 +4,12 @@ const morgan = require('morgan');
 const mongoose = require( 'mongoose' );
 const validateAPIKEY = require('./middleware/validate-bearer-token');
 const { Bookmarks } = require( './models/bookmarks');
+const { DATABASE_URL, PORT } = require("./config");
 
 const app = express();
+
+app.use( express.static("public"));
+
 const { v4: uuidv4 } = require('uuid');
 const jsonParser = bodyParser.json();
 
@@ -159,7 +163,7 @@ app.patch('/bookmark/:id', [jsonParser], (req, res) => {
 	})
 })
 
-app.listen( 8080, () => {
+app.listen( PORT, () => {
 	console.log("Server - CRUD app on port 8080");
 
 	new Promise( ( resolve, reject) => {
@@ -169,7 +173,7 @@ app.listen( 8080, () => {
 			useCreateIndex: true
 		}
 
-		mongoose.connect('mongodb://localhost/bookmarks', settings, ( err ) => {
+		mongoose.connect(DATABASE_URL, settings, ( err ) => {
 			if( err ) {
 				return reject( err );
 			} else {
@@ -182,5 +186,3 @@ app.listen( 8080, () => {
 		})
 	})
 });
-
-//http://localhost:8080
